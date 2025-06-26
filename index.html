@@ -1,0 +1,130 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Jack's Timetable</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen;
+            margin: 0;
+            padding: 0;
+            background-color: #fff;
+        }
+        header {
+            background-color: #2196F3;
+            color: white;
+            padding: 20px;
+            font-size: 18px;
+        }
+        .tabbar {
+            display: flex;
+            justify-content: space-around;
+            background-color: #2196F3;
+            color: white;
+            font-size: 14px;
+        }
+        .tab {
+            padding: 10px;
+            flex: 1;
+            text-align: center;
+        }
+        .tab.selected {
+            background-color: #0b7dda;
+        }
+        .date-strip {
+            display: flex;
+            justify-content: space-around;
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+        }
+        .date-box {
+            text-align: center;
+            padding: 8px 6px;
+            border-radius: 8px;
+            width: 50px;
+            color: #333;
+            cursor: pointer;
+        }
+        .date-box.selected {
+            background-color: #2196F3;
+            color: white;
+        }
+        .lesson {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        .time {
+            font-weight: bold;
+            font-size: 15px;
+        }
+        .details {
+            font-size: 13px;
+            color: #444;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div>Jack<br><small style="font-size: 14px;">Hill</small></div>
+    </header>
+    <div class="tabbar">
+        <div class="tab">HOMEWORK</div>
+        <div class="tab">DETENTIONS</div>
+        <div class="tab selected">TIMETABLE</div>
+        <div class="tab">REWARDS</div>
+    </div>
+    <div class="date-strip" id="date-strip"></div>
+    <div id="lessons"></div>
+
+    <script>
+        const timetable = {"Week A": {"Monday": [["08:55 - 09:45", "10B/Bs1 (Business)", "Ms A Eastwood", "G11"], ["09:45 - 10:40", "10C/Gg1 (Geog)", "Miss J Walby", "C16"], ["11:00 - 11:50", "10G/En1 (English)", "Miss K Prescott", "C9"], ["12:30 - 13:15", "10G/Pe3 (P.E.)", "Mr M Cartwright", ""], ["13:15 - 14:10", "10G/Pe3 (P.E.)", "Mr M Cartwright", ""], ["14:10 - 15:00", "10G/Sc1 (Science)", "Mr A Withers", "C29"]], "Tuesday": [["08:55 - 09:45", "10G/Ec1 (E & C)", "Mrs E Hayes", "G5"], ["09:45 - 10:40", "10G/Sc1 (Science)", "Mr A Withers", "C29"], ["11:00 - 11:50", "10B/Bs1 (Business)", "Ms A Eastwood", "G11"], ["12:30 - 13:15", "10A/Ho1 (Hospitality)", "Mrs E Hayes", "G6"], ["13:15 - 14:10", "10G/Ma1 (Maths)", "Mr M Kearns", "A8"]], "Wednesday": [["08:55 - 09:45", "10C/Gg1 (Geog)", "Miss J Walby", "C16"], ["09:45 - 10:40", "10G/Sc1 (Science)", "Mr C James", "C29"], ["11:00 - 11:50", "10G/En1 (English)", "Mrs A Murrell", "C5"], ["12:30 - 13:15", "10G/Ma1 (Maths)", "Mr J Wall", ""], ["13:15 - 14:10", "10G/Sc1 (Science)", "Mr C James", "C30"], ["14:10 - 15:00", "10D/Cp1 (Computer Studies)", "Mrs N Fenn", "C27"]], "Thursday": [["08:55 - 09:45", "10G/Sc1 (Science)", "Mr A Withers", "C29"], ["09:45 - 10:40", "10C/Gg1 (Geog)", "Miss J Walby", "C16"], ["11:00 - 11:50", "10G/En1 (English)", "Miss K Prescott", "C9"], ["12:30 - 13:15", "10A/Ho1 (Hospitality)", "Mrs A Henderson", "G2"], ["13:15 - 14:10", "10A/Ho1 (Hospitality)", "Mrs A Henderson", "G2"], ["14:10 - 15:00", "10G/Ma1 (Maths)", "Mr M Kearns", "A8"]], "Friday": [["08:55 - 09:45", "10D/Cp1 (Computer Studies)", "Mrs N Fenn", "C27"], ["09:45 - 10:40", "10D/Cp1 (Computer Studies)", "Mrs N Fenn", "C27"], ["11:00 - 11:50", "10G/Sc1 (Science)", "Mr A Withers", "C29"], ["12:30 - 13:15", "10G/Ma1 (Maths)", "Mr M Kearns", "A8"], ["13:15 - 14:10", "10B/Bs1 (Business)", "Ms A Eastwood", "G11"], ["14:10 - 15:00", "10G/En1 (English)", "Miss K Prescott", "C9"]]}, "Week B": {"Monday": [["08:55 - 09:45", "10G/Sc1 (Science)", "Mr A Withers", "C29"], ["09:45 - 10:40", "10G/Sc1 (Science)", "Mr A Withers", "C29"], ["11:00 - 11:50", "10G/En1 (English)", "Mrs A Murrell", "C1"], ["11:50 - 12:30", "10G/Ma1 (Maths)", "Mr M Kearns", "A8"], ["13:15 - 14:10", "10B/Bs1 (Business)", "Ms C Jordan", "C11"], ["14:10 - 15:00", "10C/Gg1 (Geog)", "Miss J Walby", "C16"]], "Tuesday": [["08:55 - 09:45", "10G/Ma1 (Maths)", "Mr M Kearns", "A8"], ["09:45 - 10:40", "10G/En1 (English)", "Mrs A Murrell", "C1"], ["11:00 - 11:50", "10B/Bs1 (Business)", "Ms A Eastwood", "G11"], ["11:50 - 12:30", "10G/Sc1 (Science)", "Mr C James", "C38"], ["13:15 - 14:10", "10A/Ho1 (Hospitality)", "Mr A Ingham", "G6"]], "Wednesday": [["08:55 - 09:45", "10D/Cp1 (Computer Studies)", "Mr K Harrison", "C26"], ["09:45 - 10:40", "10C/Gg1 (Geog)", "Miss J Walby", "C16"], ["11:00 - 11:50", "10G/Sc1 (Science)", "Mr C James", "C37"], ["11:50 - 12:30", "10G/En1 (English)", "Mrs A Murrell", "C5"], ["13:15 - 14:10", "10G/Pe3 (P.E.)", "Mr M Cartwright", ""], ["14:10 - 15:00", "10G/Pe3 (P.E.)", "Mr M Cartwright", ""]], "Thursday": [["08:55 - 09:45", "10C/Gg1 (Geog)", "Miss J Walby", "C16"], ["09:45 - 10:40", "10G/En1 (English)", "Miss K Prescott", "C9"], ["11:00 - 11:50", "10A/Ho1 (Hospitality)", "Mrs A Henderson", "G6"], ["11:50 - 12:30", "10A/Ho1 (Hospitality)", "Mrs A Henderson", "G6"], ["13:15 - 14:10", "10G/Sc1 (Science)", "Mr C James", "C38"], ["14:10 - 15:00", "10G/Ma1 (Maths)", "Mr M Kearns", "A8"]], "Friday": [["08:55 - 09:45", "10D/Cp1 (Computer Studies)", "Mr K Harrison", "C26"], ["09:45 - 10:40", "10D/Cp1 (Computer Studies)", "Mr K Harrison", "C26"], ["11:00 - 11:50", "10G/Sc1 (Science)", "Mr C James", "C32"], ["11:50 - 12:30", "10G/Re1 (RE)", "Mrs S Wigzell", "C19"], ["13:15 - 14:10", "10B/Bs1 (Business)", "Ms C Jordan", "C11"], ["14:10 - 15:00", "10G/Ma1 (Maths)", "Mr M Kearns", "A8"]]}};
+        const startDate = new Date(2024, 5, 24); // June 24, 2024 = Week A Monday
+
+        function getWeekType(date) {
+            const daysPassed = Math.floor((date - startDate) / (1000 * 60 * 60 * 24));
+            const weekNumber = Math.floor(daysPassed / 7);
+            return weekNumber % 2 === 0 ? 'Week A' : 'Week B';
+        }
+
+        function renderDates(selectedDate) {
+            const strip = document.getElementById('date-strip');
+            strip.innerHTML = '';
+            for (let i = 0; i < 5; i++) {
+                const date = new Date(selectedDate);
+                date.setDate(date.getDate() - (selectedDate.getDay() - 1) + i);
+                const box = document.createElement('div');
+                box.className = 'date-box';
+                if (date.toDateString() === selectedDate.toDateString()) {
+                    box.classList.add('selected');
+                }
+                const day = date.toLocaleString('en-GB', { weekday: 'short' });
+                const num = date.getDate();
+                box.innerHTML = `<div style='font-size:12px'>${day}</div><div style='font-weight:bold'>${num}</div>`;
+                box.onclick = () => {
+                    renderDates(date);
+                    renderLessons(date);
+                };
+                strip.appendChild(box);
+            }
+        }
+
+        function renderLessons(date) {
+            const dayName = date.toLocaleString('en-GB', { weekday: 'long' });
+            const weekType = getWeekType(date);
+            const lessons = timetable[weekType][dayName] || [];
+            const container = document.getElementById('lessons');
+            container.innerHTML = lessons.map(lesson => `
+                <div class='lesson'>
+                    <div class='time'>${lesson[0]}</div>
+                    <div class='details'>${lesson[1]}<br>${lesson[2]} | ${lesson[3]}</div>
+                </div>
+            `).join('') || "<div style='padding:10px;'>No lessons scheduled.</div>";
+        }
+
+        const today = new Date();
+        renderDates(today);
+        renderLessons(today);
+    </script>
+</body>
+</html>
